@@ -35,7 +35,11 @@ class RISCVDecoder(Component):
         DataWidth = 32
         AluWidth = 4
         # Interface
+
+        # InPort
         s.instr = InPort(DataWidth)
+
+        # OutPort
         s.rs1 = OutPort(5)
         s.rs2 = OutPort(5)
         s.rd = OutPort(5)
@@ -44,6 +48,7 @@ class RISCVDecoder(Component):
         s.opcode = OutPort(7)
         s.funct3 = OutPort(3)
         s.funct7 = OutPort(7)
+        s.PC = OutPort(DataWidth)
 
         # Implement the logic
         @update

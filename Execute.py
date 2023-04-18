@@ -1,5 +1,6 @@
 from pymtl3 import *
 import numpy as np
+#from RegisterFile import RegisterFile
 
 class Bits32:
     def __int__(self):
@@ -13,30 +14,53 @@ class Bits1:
 
 class ExecuteUnit(Component):
 
+
     def __init__(self):
         self.instr = None
 
     def construct(s):
-        # Inputs
 
+        # InPorts
         s.instr = InPort(Bits32)
         s.rs1 = InPort(Bits32)
         s.rs2 = InPort(Bits32)
+        s.rd = InPort(Bits32)
         s.imm = InPort(Bits32)
         s.pc = InPort(Bits32)
+        s.func7 = InPort(7)
+        s.func3 = InPort(3)
+        s.opcode = InPort(7)
 
-        # Outputs
+        # OutPorts
         s.result = OutPort(Bits32)
         s.mem_addr = OutPort(Bits32)
         s.mem_data = OutPort(Bits32)
         s.branch = OutPort(Bits32)
         s.jump_addr = OutPort(Bits32)
 
+
+        # # Wire
+        # s.wen = Wire(1)
+        # s.ren = Wire(1)
+        # s.dataSourceRegister1 = Wire(32)
+        # s.dataSourceRegister2 = Wire(32)
+        # # Memory Instance
+        # s.mem = RegisterFile()
+        # s.mem.wen //= s.wen
+        # s.mem.ren //= 1
+        # s.mem.AddrSourceRegister1 //= s.rs1
+        # s.mem.AddrSourceRegister2 //= s.rs2
+        # s.mem.AddrDestinationRegister //= s.result
+        # s.mem.dataIn //= 0
+        # s.mem.dataOutSourceRegister1 //= s.dataSourceRegister1
+        # s.mem.dataOutSourceRegister2 //= s.dataSourceRegister2
+        #
+
         @update
         def execute():
-            opcode = s.instr[0:7]
-            funct3 = s.instr[12:15]
-            funct7 = s.instr[25:32]
+            opcode = s.opcode
+            funct3 = s.func3
+            funct7 = s.func7
             imm = s.imm.sext(32)
 
             # OP_IMM instructions
@@ -163,8 +187,6 @@ class ExecuteUnit(Component):
                     pass  # Do nothing for now
 
             # Unrecognized instruction
-            else:
-                raise ValueError("Unrecognized instruction: {}".format(s.instr))
 
         def line_trace(s):
             return f"pc = {s.pc:x} instr = {s.instr:x} result = {s.result:x}"

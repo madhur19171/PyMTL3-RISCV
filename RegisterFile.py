@@ -17,27 +17,31 @@ class RegisterFile(Component):
 
     def construct(self):
         # self.clk = InPort(1)
+
+        # InPort
         self.wen = InPort(1)
         self.ren = InPort(1)
         self.AddrSourceRegister1 = InPort(5)
         self.AddrSourceRegister2 = InPort(5)
         self.AddrDestinationRegister = InPort(5)
         self.dataIn = InPort(32)
+
+        # OutPort
         self.dataOutSourceRegister1 = OutPort(32)
         self.dataOutSourceRegister2 = OutPort(32)
         
         self.RegisterFile = [Wire(32) for i in range(32)]
     
-        @update_ff
+        @update
         def read_register_file():
             if self.ren == 1:
-                self.dataOutSourceRegister1 <<= self.RegisterFile[self.AddrSourceRegister1]
-                self.dataOutSourceRegister2 <<= self.RegisterFile[self.AddrSourceRegister2]
+                self.dataOutSourceRegister1 @= self.RegisterFile[self.AddrSourceRegister1]
+                self.dataOutSourceRegister2 @= self.RegisterFile[self.AddrSourceRegister2]
         
-        @update_ff
+        @update
         def write_back():
             if self.wen == 1:
-                self.RegisterFile[self.AddrDestinationRegister] <<= self.dataIn
+                self.RegisterFile[self.AddrDestinationRegister] @= self.dataIn
         
 
                 
